@@ -1,4 +1,4 @@
-package com.example.allahs99names.presentation.theme
+package com.example.allahs99names.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

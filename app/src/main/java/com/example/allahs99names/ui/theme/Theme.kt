@@ -1,4 +1,4 @@
-package com.example.allahs99names.presentation.theme
+package com.example.allahs99names.ui.theme
 
 import android.app.Activity
 import android.os.Build
