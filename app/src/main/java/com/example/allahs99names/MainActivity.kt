@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -50,23 +51,31 @@ class MainActivity : ComponentActivity() {
                                 backgroundColor = MaterialTheme.colorScheme.background
                             ) {
                                 bottomNavVisibleScreens.forEach { screen ->
+                                    val isSelected =
+                                        currentDestination?.hierarchy?.any { it.route == screen.route } == true
                                     BottomNavigationItem(
                                         icon = {
                                             Icon(
                                                 painter = painterResource(
-                                                    id = screen.bottomNavIcon ?: 0
+                                                    id = if (isSelected) {
+                                                        screen.bottomNavSelectedIcon ?: 0
+                                                    } else {
+                                                        screen.bottomNavUnselectedIcon ?: 0
+                                                    }
                                                 ),
-                                                contentDescription = null
+                                                contentDescription = null,
+                                                tint = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray
                                             )
                                         },
                                         label = {
                                             Text(
                                                 text = stringResource(
                                                     id = screen.bottomNavText ?: 0
-                                                )
+                                                ),
+                                                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray
                                             )
                                         },
-                                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                                        selected = isSelected,
                                         onClick = {
                                             navController.navigate(screen.route) {
                                                 popUpTo(navController.graph.findStartDestination().id) {
