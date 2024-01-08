@@ -8,10 +8,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.allahs99names.ui.theme.Allahs99NamesTheme
 
 @Composable
 fun NamesListScreen() {
+    val viewModel: NamesListViewModel = hiltViewModel()
     Column(
         modifier = Modifier
             .fillMaxSize()
