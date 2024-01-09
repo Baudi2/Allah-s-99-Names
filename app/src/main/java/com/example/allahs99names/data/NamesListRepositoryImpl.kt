@@ -23,6 +23,7 @@ class NamesListRepositoryImpl @Inject constructor(private val resourceManager: R
             for (i in 0..BLESSED_NAMES_LIST_SIZE.dec()) {
                 add(
                     FullBlessedNameEntity(
+                        nameCount = i.inc(),
                         arabicVersion = arabicBlessedNamesArray[i],
                         transliteration = transliterationBlessedNamesArray[i],
                         russianVersion = russianTranslationBlessedNamesArray[i],
