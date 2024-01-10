@@ -19,8 +19,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.allahs99names.R
+import com.example.allahs99names.core.Empty
 import com.example.allahs99names.domain.model.FullBlessedNameEntity
 import com.example.allahs99names.ui.theme.Allahs99NamesTheme
 import com.example.allahs99names.ui.utils.rippleClickable
@@ -45,11 +49,13 @@ import com.example.allahs99names.ui.utils.rippleClickable
 fun NamesListScreen() {
     val viewModel: NamesListViewModel = hiltViewModel()
     val state = viewModel.state.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
+        SearchItem(viewModel)
         if (state.value.namesList.isEmpty()) {
             EmptySearch()
         } else {
@@ -65,10 +71,53 @@ fun NamesListScreen() {
 }
 
 @Composable
+private fun SearchItem(viewModel: NamesListViewModel) {
+    val searchQuery = viewModel.searchQuery
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 16.dp),
+        value = searchQuery.value,
+        onValueChange = { input ->
+            searchQuery.value = input
+            viewModel.onSearchQueryChanged(input)
+        },
+        placeholder = {
+            Text(
+                text = stringResource(id = R.string.names_list_search_hint)
+            )
+        },
+        trailingIcon = if (searchQuery.value.isNotEmpty()) {
+            {
+                IconButton(
+                    onClick = {
+                        searchQuery.value = String.Empty
+                        viewModel.onSearchQueryChanged(String.Empty)
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.clear_search_icon),
+                        contentDescription = null
+                    )
+                }
+            }
+        } else {
+            {}
+        }
+    )
+}
+
+@Composable
 private fun EmptySearch() {
-    Column {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         Text(
-            text = stringResource(id = R.string.names_list_empty_search_message)
+            modifier = Modifier.align(Alignment.Center),
+            text = stringResource(id = R.string.names_list_empty_search_message),
+            color = MaterialTheme.colorScheme.secondary,
+            fontSize = 26.sp
         )
     }
 }
