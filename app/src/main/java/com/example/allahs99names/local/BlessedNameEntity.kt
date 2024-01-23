@@ -6,8 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = BLESSED_NAME_TABLE_NAME)
 data class BlessedNameEntity(
     @PrimaryKey
-    val arabicName: String,
-    val isLearned: Boolean
+    val arabicName: String
 )
 
 const val BLESSED_NAME_TABLE_NAME = "BLESSED_NAME_TABLE_NAME"

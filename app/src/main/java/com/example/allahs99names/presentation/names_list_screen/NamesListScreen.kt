@@ -1,5 +1,6 @@
 package com.example.allahs99names.presentation.names_list_screen
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.animateFloatAsState
@@ -7,9 +8,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -62,7 +66,9 @@ fun NamesListScreen() {
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
                 items(state.value.namesList) {
-                    BlessedNameItem(it)
+                    BlessedNameItem(it) { isLearned, arabicName ->
+                        viewModel.changeSavedNameLearnedState(isLearned, arabicName)
+                    }
                 }
             }
         }
@@ -122,8 +128,13 @@ private fun EmptySearch() {
 }
 
 @Composable
-private fun BlessedNameItem(bNameEntity: FullBlessedNameEntity) {
+private fun BlessedNameItem(
+    bNameEntity: FullBlessedNameEntity,
+    changeSavedLearnedNameState: (Boolean, String) -> Unit
+) {
     val isOpened = remember { mutableStateOf(false) }
+    val isLearned = remember { mutableStateOf(bNameEntity.isLearned) }
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -227,12 +238,54 @@ private fun BlessedNameItem(bNameEntity: FullBlessedNameEntity) {
                 )
             ),
             content = {
-                Text(
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
-                    text = bNameEntity.russianMeaning,
-                    textAlign = TextAlign.Center,
-                    color = Color.White
-                )
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        IconButton(
+                            onClick = {
+                                isLearned.value = !isLearned.value
+                                changeSavedLearnedNameState.invoke(
+                                    isLearned.value,
+                                    bNameEntity.arabicVersion
+                                )
+                            }
+                        ) {
+                            Icon(
+                                tint = Color.White,
+                                painter = if (isLearned.value) {
+                                    painterResource(id = R.drawable.name_added_learned_icon)
+                                } else {
+                                    painterResource(
+                                        id = R.drawable.add_learned_name_icon
+                                    )
+                                },
+                                contentDescription = null
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                Toast
+                                    .makeText(context, "Воспроизводим запись!", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        ) {
+                            Icon(
+                                tint = Color.White,
+                                painter = painterResource(id = R.drawable.icon_play_name_recording),
+                                contentDescription = null
+                            )
+                        }
+                    }
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
+                        text = bNameEntity.russianMeaning,
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                }
             }
         )
     }

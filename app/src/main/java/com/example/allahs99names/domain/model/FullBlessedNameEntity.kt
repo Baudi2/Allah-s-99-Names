@@ -5,5 +5,6 @@ data class FullBlessedNameEntity(
     val arabicVersion: String,
     val transliteration: String,
     val russianVersion: String,
-    val russianMeaning: String
+    val russianMeaning: String,
+    val isLearned: Boolean
 )

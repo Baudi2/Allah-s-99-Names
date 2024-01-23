@@ -1,8 +1,6 @@
 package com.example.allahs99names.presentation.names_list_screen
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.allahs99names.core.Empty
@@ -36,10 +34,22 @@ class NamesListViewModel @Inject constructor(private val repository: NamesListRe
     }
 
     private fun getNamesList() {
-        val namesList = repository.getAllNames()
-        fullNamesList = namesList
-        mutableState.update {
-            it.copy(namesList = namesList)
+        viewModelScope.launch(Dispatchers.IO) {
+            val namesList = repository.getAllNames()
+            fullNamesList = namesList
+            mutableState.update {
+                it.copy(namesList = namesList)
+            }
+        }
+    }
+
+    fun changeSavedNameLearnedState(isLearned: Boolean, arabicName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (isLearned) {
+                repository.saveLearnedName(arabicName)
+            } else {
+                repository.removeLearnedName(arabicName)
+            }
         }
     }
 
