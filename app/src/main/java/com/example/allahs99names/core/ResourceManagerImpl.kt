@@ -1,6 +1,7 @@
 package com.example.allahs99names.core
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import androidx.annotation.ArrayRes
 import androidx.annotation.DrawableRes
@@ -23,4 +24,8 @@ class ResourceManagerImpl @Inject constructor(@ApplicationContext private val co
     override fun getStringArray(@ArrayRes resId: Int): Array<out String> = context.resources.getStringArray(resId)
 
     override fun getDrawable(@DrawableRes resId: Int): Drawable = ContextCompat.getDrawable(context, resId)!!
+
+    override fun getIntArray(@ArrayRes resId: Int): IntArray = context.resources.getIntArray(resId)
+
+    override fun obtainTypedArray(resId: Int): TypedArray = context.resources.obtainTypedArray(resId)
 }

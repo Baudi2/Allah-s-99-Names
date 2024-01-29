@@ -1,5 +1,6 @@
 package com.example.allahs99names.core
 
+import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import androidx.annotation.ArrayRes
 import androidx.annotation.ColorRes
@@ -20,4 +21,8 @@ interface ResourceManager {
     fun getColor(@ColorRes resId: Int): Int
 
     fun getDrawable(@DrawableRes resId: Int): Drawable
+
+    fun getIntArray(@ArrayRes resId: Int): IntArray
+
+    fun obtainTypedArray(@ArrayRes resId: Int): TypedArray
 }

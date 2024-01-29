@@ -1,6 +1,7 @@
 package com.example.allahs99names.presentation.names_list_screen
 
-import android.widget.Toast
+import android.content.Context
+import android.media.MediaPlayer
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.animateFloatAsState
@@ -27,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -265,19 +267,7 @@ private fun BlessedNameItem(
                                 contentDescription = null
                             )
                         }
-                        IconButton(
-                            onClick = {
-                                Toast
-                                    .makeText(context, "Воспроизводим запись!", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                        ) {
-                            Icon(
-                                tint = Color.White,
-                                painter = painterResource(id = R.drawable.icon_play_name_recording),
-                                contentDescription = null
-                            )
-                        }
+                        PlayNameRecordingButton(bNameEntity.nameRecordingId, context)
                     }
                     Text(
                         modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
@@ -288,6 +278,45 @@ private fun BlessedNameItem(
                 }
             }
         )
+    }
+}
+
+@Composable
+private fun PlayNameRecordingButton(audioResId: Int, context: Context) {
+    val mediaPlayer = remember {
+        MediaPlayer.create(context, audioResId).apply {
+            setOnCompletionListener {
+                it.reset()
+                it.release()
+            }
+        }
+    }
+
+    val isPlaying = remember { mutableStateOf(false) }
+
+    IconButton(onClick = {
+        if (!isPlaying.value) {
+            mediaPlayer.start()
+            isPlaying.value = true
+            mediaPlayer.setOnCompletionListener {
+                isPlaying.value = false
+            }
+        }
+    }) {
+        Icon(
+            tint = Color.White,
+            painter = painterResource(id = R.drawable.icon_play_name_recording),
+            contentDescription = null
+        )
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.stop()
+            }
+            mediaPlayer.release()
+        }
     }
 }
 

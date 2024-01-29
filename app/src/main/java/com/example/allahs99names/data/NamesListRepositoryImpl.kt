@@ -24,6 +24,7 @@ class NamesListRepositoryImpl @Inject constructor(
             resourceManager.getStringArray(R.array.blessed_names_russian_translation)
         val russianMeaningBlessedNamesArray =
             resourceManager.getStringArray(R.array.blessed_names_russian_meaning)
+        val nameAudioIds = getNameAudioIds()
 
         return arrayListOf<FullBlessedNameEntity>().apply {
             for (i in 0..BLESSED_NAMES_LIST_SIZE.dec()) {
@@ -34,7 +35,8 @@ class NamesListRepositoryImpl @Inject constructor(
                         transliteration = transliterationBlessedNamesArray[i],
                         russianVersion = russianTranslationBlessedNamesArray[i],
                         russianMeaning = russianMeaningBlessedNamesArray[i],
-                        isLearned = learnedNames.contains(arabicBlessedNamesArray[i])
+                        isLearned = learnedNames.contains(arabicBlessedNamesArray[i]),
+                        nameRecordingId = nameAudioIds[i]
                     )
                 )
             }
@@ -47,6 +49,16 @@ class NamesListRepositoryImpl @Inject constructor(
 
     override suspend fun removeLearnedName(arabicName: String) {
         dao.removeSingleName(arabicName)
+    }
+
+    private fun getNameAudioIds(): IntArray {
+        val typedArray = resourceManager.obtainTypedArray(R.array.names_audio_ids)
+        val ids = IntArray(typedArray.length())
+        for (i in ids.indices) {
+            ids[i] = typedArray.getResourceId(i, 0)
+        }
+        typedArray.recycle()
+        return ids
     }
 
     companion object {
