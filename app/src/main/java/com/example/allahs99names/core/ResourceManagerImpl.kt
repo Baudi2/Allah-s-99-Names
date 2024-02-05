@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class ResourceManagerImpl @Inject constructor(@ApplicationContext private val context: Context): ResourceManager {
+class ResourceManagerImpl @Inject constructor(@ApplicationContext private val context: Context) : ResourceManager {
 
     override fun getColor(resId: Int): Int = ContextCompat.getColor(context, resId)
 

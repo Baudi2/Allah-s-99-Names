@@ -19,7 +19,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class CommonModule {
 
-
     @Binds
     @Singleton
     abstract fun bindResourceManager(impl: ResourceManagerImpl): ResourceManager

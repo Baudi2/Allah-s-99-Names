@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
     version = 1,
     exportSchema = false
 )
-abstract class BlessedNameDatabase: RoomDatabase() {
+abstract class BlessedNameDatabase : RoomDatabase() {
     abstract fun blessedNameDao(): BlessedNameDao
 
     companion object {

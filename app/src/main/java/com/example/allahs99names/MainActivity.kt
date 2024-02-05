@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = START_SCREEN_ROUTE,
                         modifier = Modifier
                             .padding(innerPadding)
-                            .fillMaxSize(),
+                            .fillMaxSize()
                     ) {
                         composable(START_SCREEN_ROUTE) { StartScreen(navController) }
                         composable(TRAINING_SCREEN_ROUTE) { TrainingScreen() }

@@ -25,9 +25,7 @@ import com.example.allahs99names.ui.theme.Allahs99NamesTheme
 import com.example.allahs99names.ui.utils.rippleClickable
 
 @Composable
-fun StartScreen(
-    navController: NavController? = null
-) {
+fun StartScreen(navController: NavController? = null) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -42,13 +40,13 @@ fun StartScreen(
                 .padding(top = 240.dp)
                 .rippleClickable {
                     navController?.navigate(Screens.ScreenTraining.route)
-                },
+                }
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.primary),
-                contentAlignment = Alignment.Center,
+                contentAlignment = Alignment.Center
             ) {
                 Text(
                     modifier = Modifier,
