@@ -1,8 +1,11 @@
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 android {
@@ -64,7 +67,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material:1.5.4")
+    implementation("androidx.compose.material:material:1.6.0")
 
     // Test
     testImplementation("junit:junit:4.13.2")
@@ -89,4 +92,16 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+}
+
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+    version.set("1.1.1")
+    verbose.set(true)
+    android.set(true)
+    ignoreFailures.set(false)
+    reporters {
+        reporter(ReporterType.PLAIN)
+        reporter(ReporterType.CHECKSTYLE)
+        reporter(ReporterType.SARIF)
+    }
 }

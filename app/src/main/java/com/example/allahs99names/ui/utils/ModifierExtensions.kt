@@ -8,10 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 
-fun Modifier.rippleClickable(
-    color: Color = Color.Gray,
-    onClick: () -> Unit
-): Modifier = composed {
+fun Modifier.rippleClickable(color: Color = Color.Gray, onClick: () -> Unit): Modifier = composed {
     val interactionSource = remember { MutableInteractionSource() }
     this
         .clickable(

@@ -130,10 +130,7 @@ private fun EmptySearch() {
 }
 
 @Composable
-private fun BlessedNameItem(
-    bNameEntity: FullBlessedNameEntity,
-    changeSavedLearnedNameState: (Boolean, String) -> Unit
-) {
+private fun BlessedNameItem(bNameEntity: FullBlessedNameEntity, changeSavedLearnedNameState: (Boolean, String) -> Unit) {
     val isOpened = remember { mutableStateOf(false) }
     val isLearned = remember { mutableStateOf(bNameEntity.isLearned) }
     val context = LocalContext.current
@@ -144,7 +141,7 @@ private fun BlessedNameItem(
             .padding(vertical = 8.dp)
             .background(
                 color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(12.dp)
             )
             .rippleClickable {
                 isOpened.value = !isOpened.value

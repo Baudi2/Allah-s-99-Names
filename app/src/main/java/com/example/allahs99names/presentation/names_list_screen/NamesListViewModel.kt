@@ -68,9 +68,9 @@ class NamesListViewModel @Inject constructor(private val repository: NamesListRe
         return fullNamesList.filter { nameEntity ->
             query.lowercase().let { loweredQuery ->
                 nameEntity.arabicVersion.lowercase().contains(loweredQuery) ||
-                        nameEntity.transliteration.lowercase().contains(loweredQuery) ||
-                        nameEntity.russianVersion.lowercase().contains(loweredQuery) ||
-                        nameEntity.nameCount.toString().contains(loweredQuery)
+                    nameEntity.transliteration.lowercase().contains(loweredQuery) ||
+                    nameEntity.russianVersion.lowercase().contains(loweredQuery) ||
+                    nameEntity.nameCount.toString().contains(loweredQuery)
             }
         }
     }
