@@ -5,4 +5,5 @@
     <string name="names_list_screen_bottom_nav_tab_title">Имена</string>
     <string name="names_list_empty_search_message">Поиск не дал результатов</string>
     <string name="names_list_search_hint">Найти имя</string>
+    <string name="training_hear_one_title">Что вы слышите?</string>
 </resources>

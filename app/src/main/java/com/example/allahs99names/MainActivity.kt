@@ -27,7 +27,7 @@ import com.example.allahs99names.presentation.navigation.Routes.START_SCREEN_ROU
 import com.example.allahs99names.presentation.navigation.Routes.TRAINING_SCREEN_ROUTE
 import com.example.allahs99names.presentation.navigation.Screens
 import com.example.allahs99names.presentation.start_screen.StartScreen
-import com.example.allahs99names.presentation.training_screen.TrainingScreen
+import com.example.allahs99names.presentation.trainings.TrainingScreen
 import com.example.allahs99names.ui.theme.Allahs99NamesTheme
 import dagger.hilt.android.AndroidEntryPoint
 
