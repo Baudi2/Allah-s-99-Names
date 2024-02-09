@@ -11,4 +11,3 @@ sealed class TrainingOneHearState {
 
     data object Nothing : TrainingOneHearState()
 }
-

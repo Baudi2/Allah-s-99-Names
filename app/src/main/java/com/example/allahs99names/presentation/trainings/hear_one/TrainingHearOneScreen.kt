@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -36,8 +37,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.allahs99names.R
 import com.example.allahs99names.domain.model.FullBlessedNameEntity
+import com.example.allahs99names.presentation.trainings.components.TrainingErrorModal
+import com.example.allahs99names.presentation.trainings.components.TrainingSuccessfulModal
 import com.example.allahs99names.presentation.trainings.hear_one.TrainingOneHearState.Content
 import com.example.allahs99names.presentation.trainings.hear_one.TrainingOneHearState.Nothing
+import com.example.allahs99names.ui.components.ButtonComponent
+import com.example.allahs99names.ui.components.ButtonState
 import com.example.allahs99names.ui.theme.Allahs99NamesTheme
 import com.example.allahs99names.ui.utils.rippleClickable
 
@@ -48,7 +53,7 @@ fun TrainingHearOneScreen() {
 
     when (val observedState = state.value) {
         is Content -> {
-            Content(observedState)
+            Content(observedState, viewModel)
         }
 
         Nothing -> Unit
@@ -56,7 +61,10 @@ fun TrainingHearOneScreen() {
 }
 
 @Composable
-private fun Content(content: Content) {
+private fun Content(content: Content, viewModel: TrainingHearOneViewModel) {
+    val selectedName = remember { mutableStateOf<FullBlessedNameEntity?>(null) }
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,14 +78,54 @@ private fun Content(content: Content) {
             fontSize = 20.sp
         )
 
-        PlayCorrectNameRecordingButtonComponent()
+        PlayCorrectNameRecordingButtonComponent {
+            viewModel.playSound(context, content.nameToGuess.nameRecordingId)
+        }
 
-        NamesToGuessBlockComponent(content.namesOptions)
+        NamesToGuessBlockComponent(content.namesOptions, selectedName)
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        ButtonComponent(
+            modifier = Modifier
+                .padding(bottom = 26.dp),
+            state = if (selectedName.value == null) ButtonState.DISABLED else ButtonState.ENABLED,
+            text = if (selectedName.value == null) {
+                stringResource(id = R.string.training_button_continue_disabled_text)
+            } else {
+                stringResource(id = R.string.training_button_continue_enabled_text)
+            },
+            onClick = {
+                selectedName.value?.let {
+                    viewModel.checkSelectedOption(it, content.nameToGuess)
+                }
+            }
+        )
+    }
+
+    if (content.isCorrect == true) {
+        TrainingSuccessfulModal(
+            playSound = { soundId ->
+                viewModel.playSound(context, soundId)
+            },
+            onContinueClicked = {
+            }
+        )
+    }
+    if (content.isCorrect == false) {
+        TrainingErrorModal(
+            correctAnswer = content.nameToGuess.arabicVersion,
+            playSound = { soundId ->
+                viewModel.playSound(context, soundId)
+            },
+            onContinueClicked = {
+            }
+        )
     }
 }
 
 @Composable
-private fun PlayCorrectNameRecordingButtonComponent() {
+private fun PlayCorrectNameRecordingButtonComponent(playNameRecording: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -97,6 +145,9 @@ private fun PlayCorrectNameRecordingButtonComponent() {
                     border = BorderStroke(2.dp, Color.LightGray),
                     shape = RoundedCornerShape(12)
                 )
+                .rippleClickable {
+                    playNameRecording.invoke()
+                }
         ) {
             Icon(
                 modifier = Modifier
@@ -111,11 +162,7 @@ private fun PlayCorrectNameRecordingButtonComponent() {
 }
 
 @Composable
-private fun NamesToGuessBlockComponent(
-    names: List<FullBlessedNameEntity>
-) {
-    val selectedName = remember { mutableStateOf<FullBlessedNameEntity?>(null) }
-
+private fun NamesToGuessBlockComponent(names: List<FullBlessedNameEntity>, selectedName: MutableState<FullBlessedNameEntity?>) {
     Spacer(modifier = Modifier.height(64.dp))
     Column(
         modifier = Modifier

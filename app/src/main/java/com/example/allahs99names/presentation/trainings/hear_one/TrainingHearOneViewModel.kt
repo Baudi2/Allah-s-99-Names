@@ -1,5 +1,8 @@
 package com.example.allahs99names.presentation.trainings.hear_one
 
+import android.content.Context
+import android.media.MediaPlayer
+import androidx.annotation.RawRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.allahs99names.domain.model.FullBlessedNameEntity
@@ -19,6 +22,8 @@ class TrainingHearOneViewModel @Inject constructor(private val repository: Names
 
     private val mutableState = MutableStateFlow<TrainingOneHearState>(Nothing)
     val state = mutableState.asStateFlow()
+
+    private var mediaPlayer: MediaPlayer? = null
 
     init {
         loadContent()
@@ -47,6 +52,24 @@ class TrainingHearOneViewModel @Inject constructor(private val repository: Names
                 (it as Content).copy(isCorrect = isGuessed)
             }
         }
+    }
+
+    fun playSound(context: Context, @RawRes soundResId: Int) {
+        // If there's already a sound playing, stop it and release the resources
+        mediaPlayer?.release()
+
+        mediaPlayer = MediaPlayer.create(context, soundResId).apply {
+            setOnCompletionListener {
+                it.release()
+                mediaPlayer = null
+            }
+            start()
+        }
+    }
+
+    override fun onCleared() {
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     private companion object {
