@@ -1,8 +1,22 @@
 <resources>
     <string name="app_name">Allah\'s 99 Names</string>
+
+    <!-->Start screen strings <!-->
     <string name="start_screen_start_training">Начать тренировку</string>
     <string name="start_screen_bottom_nav_tab_title">Тренировка</string>
+
+    <!-->Names list screen strings <!-->
     <string name="names_list_screen_bottom_nav_tab_title">Имена</string>
     <string name="names_list_empty_search_message">Поиск не дал результатов</string>
     <string name="names_list_search_hint">Найти имя</string>
+
+    <!-->Training screen strings <!-->
+    <string name="training_hear_one_title">Что вы слышите?</string>
+    <string name="training_button_continue_disabled_text">Продолжить</string>
+    <string name="training_button_continue_enabled_text">Проверить</string>
+    <string name="training_successful_modal_title">Отличная работа!</string>
+    <string name="training_successful_modal_button_text">Продолжить</string>
+    <string name="training_error_modal_title">Неправильно</string>
+    <string name="training_error_modal_button_text">Понял</string>
+    <string name="training_error_modal_correct_answer_is">Правильный ответ:</string>
 </resources>
