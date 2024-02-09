@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun rememberModalState(): SheetState = rememberModalBottomSheetState(
-    skipPartiallyExpanded = true
+fun rememberModalNonClosableState(): SheetState = rememberModalBottomSheetState(
+    skipPartiallyExpanded = true,
+    confirmValueChange = { false }
 )

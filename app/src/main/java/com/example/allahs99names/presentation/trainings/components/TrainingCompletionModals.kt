@@ -10,7 +10,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.example.allahs99names.R
 import com.example.allahs99names.ui.components.ButtonComponent
 import com.example.allahs99names.ui.components.ButtonState
+import com.example.allahs99names.ui.components.rememberModalNonClosableState
 import com.example.allahs99names.ui.theme.Allahs99NamesTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +31,7 @@ fun TrainingSuccessfulModal(playSound: (Int) -> Unit, onContinueClicked: () -> U
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.background,
-        sheetState = rememberModalBottomSheetState(),
+        sheetState = rememberModalNonClosableState(),
         content = {
             Spacer(modifier = Modifier.height(20.dp))
             Row(
@@ -73,7 +73,7 @@ fun TrainingErrorModal(correctAnswer: String, playSound: (Int) -> Unit, onContin
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.background,
-        sheetState = rememberModalBottomSheetState(),
+        sheetState = rememberModalNonClosableState(),
         content = {
             Spacer(modifier = Modifier.height(20.dp))
             Row(

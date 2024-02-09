@@ -57,15 +57,14 @@ fun ButtonComponent(
             .background(
                 color = backgroundColor,
                 shape = RoundedCornerShape(12.dp)
-            )
+            ).rippleClickable(enabled = state != ButtonState.DISABLED) {
+                onClick.invoke()
+            }
     ) {
         Text(
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(horizontal = 20.dp, vertical = 16.dp)
-                .rippleClickable(enabled = state != ButtonState.DISABLED) {
-                    onClick.invoke()
-                },
+                .padding(horizontal = 20.dp, vertical = 16.dp),
             text = buttonText,
             color = textColor,
             fontSize = 20.sp,
