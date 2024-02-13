@@ -1,13 +1,13 @@
-package com.example.allahs99names.presentation.trainings.hear_one
+package com.example.allahs99names.presentation.trainings.listen
 
 import com.example.allahs99names.domain.model.FullBlessedNameEntity
 
-sealed class TrainingOneHearState {
+sealed class TrainingHearState {
     data class Content(
         val nameToGuess: FullBlessedNameEntity,
         val namesOptions: List<FullBlessedNameEntity>,
         val isCorrect: Boolean?
-    ) : TrainingOneHearState()
+    ) : TrainingHearState()
 
-    data object Nothing : TrainingOneHearState()
+    data object Nothing : TrainingHearState()
 }

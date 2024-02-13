@@ -19,4 +19,5 @@
     <string name="training_error_modal_title">Неправильно</string>
     <string name="training_error_modal_button_text">Понял</string>
     <string name="training_error_modal_correct_answer_is">Правильный ответ:</string>
+    <string name="training_hear_two_title">Выберите правильный перевод</string>
 </resources>

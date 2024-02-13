@@ -1,4 +1,4 @@
-package com.example.allahs99names.presentation.trainings.hear_one
+package com.example.allahs99names.presentation.trainings.listen
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.allahs99names.domain.model.FullBlessedNameEntity
 import com.example.allahs99names.domain.repository.NamesListRepository
-import com.example.allahs99names.presentation.trainings.hear_one.TrainingOneHearState.Content
-import com.example.allahs99names.presentation.trainings.hear_one.TrainingOneHearState.Nothing
+import com.example.allahs99names.presentation.trainings.listen.TrainingHearState.Content
+import com.example.allahs99names.presentation.trainings.listen.TrainingHearState.Nothing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,21 +18,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TrainingHearOneViewModel @Inject constructor(private val repository: NamesListRepository) : ViewModel() {
+class TrainingHearViewModel @Inject constructor(private val repository: NamesListRepository) : ViewModel() {
 
-    private val mutableState = MutableStateFlow<TrainingOneHearState>(Nothing)
+    private val mutableState = MutableStateFlow<TrainingHearState>(Nothing)
     val state = mutableState.asStateFlow()
 
     private var mediaPlayer: MediaPlayer? = null
 
-    init {
-        loadContent()
-    }
-
-    private fun loadContent() {
+    fun loadContent(namesToLoad: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val allNames = repository.getAllNames()
-            val namesToGuess = allNames.asSequence().shuffled().take(OPTIONS_TO_GUESS).toList()
+            val namesToGuess = allNames.asSequence().shuffled().take(namesToLoad).toList()
             val correctOption = namesToGuess.random()
 
             mutableState.emit(
@@ -42,6 +38,12 @@ class TrainingHearOneViewModel @Inject constructor(private val repository: Names
                     isCorrect = null
                 )
             )
+        }
+    }
+
+    fun dropState() {
+        viewModelScope.launch {
+            mutableState.emit(Nothing)
         }
     }
 
@@ -70,9 +72,5 @@ class TrainingHearOneViewModel @Inject constructor(private val repository: Names
     override fun onCleared() {
         mediaPlayer?.release()
         mediaPlayer = null
-    }
-
-    private companion object {
-        const val OPTIONS_TO_GUESS = 4
     }
 }

@@ -101,7 +101,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                     ) {
                         composable(START_SCREEN_ROUTE) { StartScreen(navController) }
-                        composable(TRAINING_SCREEN_ROUTE) { TrainingScreen() }
+                        composable(TRAINING_SCREEN_ROUTE) { TrainingScreen(navController) }
                         composable(NAMES_LIST_SCREEN_ROUTE) { NamesListScreen() }
                     }
                 }
