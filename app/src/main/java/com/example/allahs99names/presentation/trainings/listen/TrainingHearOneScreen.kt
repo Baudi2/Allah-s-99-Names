@@ -1,4 +1,4 @@
-package com.example.allahs99names.presentation.trainings.hear_one
+package com.example.allahs99names.presentation.trainings.listen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -39,21 +39,28 @@ import com.example.allahs99names.R
 import com.example.allahs99names.domain.model.FullBlessedNameEntity
 import com.example.allahs99names.presentation.trainings.components.TrainingErrorModal
 import com.example.allahs99names.presentation.trainings.components.TrainingSuccessfulModal
-import com.example.allahs99names.presentation.trainings.hear_one.TrainingOneHearState.Content
-import com.example.allahs99names.presentation.trainings.hear_one.TrainingOneHearState.Nothing
+import com.example.allahs99names.presentation.trainings.listen.TrainingHearState.Content
+import com.example.allahs99names.presentation.trainings.listen.TrainingHearState.Nothing
 import com.example.allahs99names.ui.components.ButtonComponent
 import com.example.allahs99names.ui.components.ButtonState
 import com.example.allahs99names.ui.theme.Allahs99NamesTheme
 import com.example.allahs99names.ui.utils.rippleClickable
 
+private const val OPTIONS_TO_GUESS = 4
+
 @Composable
-fun TrainingHearOneScreen() {
-    val viewModel: TrainingHearOneViewModel = hiltViewModel()
+fun TrainingHearOneScreen(goToNextTraining: () -> Unit) {
+    val viewModel: TrainingHearViewModel = hiltViewModel()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadContent(OPTIONS_TO_GUESS)
+    }
+
     val state = viewModel.state.collectAsState()
 
     when (val observedState = state.value) {
         is Content -> {
-            Content(observedState, viewModel)
+            Content(observedState, viewModel, goToNextTraining)
         }
 
         Nothing -> Unit
@@ -61,7 +68,7 @@ fun TrainingHearOneScreen() {
 }
 
 @Composable
-private fun Content(content: Content, viewModel: TrainingHearOneViewModel) {
+private fun Content(content: Content, viewModel: TrainingHearViewModel, goToNextTraining: () -> Unit) {
     val selectedName = remember { mutableStateOf<FullBlessedNameEntity?>(null) }
     val context = LocalContext.current
 
@@ -109,6 +116,8 @@ private fun Content(content: Content, viewModel: TrainingHearOneViewModel) {
                 viewModel.playSound(context, soundId)
             },
             onContinueClicked = {
+                viewModel.dropState()
+                goToNextTraining.invoke()
             }
         )
     }
@@ -119,6 +128,8 @@ private fun Content(content: Content, viewModel: TrainingHearOneViewModel) {
                 viewModel.playSound(context, soundId)
             },
             onContinueClicked = {
+                viewModel.dropState()
+                goToNextTraining.invoke()
             }
         )
     }
@@ -250,7 +261,7 @@ private fun HearOneNameOptionComponent(
             } else {
                 Color.Gray
             },
-            fontSize = 24.sp,
+            fontSize = 26.sp,
             textAlign = TextAlign.Center,
             lineHeight = 36.sp
         )
@@ -261,6 +272,6 @@ private fun HearOneNameOptionComponent(
 @Preview
 private fun TrainingHearOneScreenPreview() {
     Allahs99NamesTheme {
-        TrainingHearOneScreen()
+        TrainingHearOneScreen {}
     }
 }
