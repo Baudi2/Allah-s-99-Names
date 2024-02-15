@@ -20,4 +20,7 @@
     <string name="training_error_modal_button_text">Понял</string>
     <string name="training_error_modal_correct_answer_is">Правильный ответ:</string>
     <string name="training_hear_two_title">Выберите правильный перевод</string>
+    <string name="training_leave_message">Прогресс тренировки не будет сохранен если вы сейчас выйдете!</string>
+    <string name="training_leave_stay_button_text">Продолжить учить</string>
+    <string name="training_leave_leave_button_text">Завершить тренировку</string>
 </resources>
