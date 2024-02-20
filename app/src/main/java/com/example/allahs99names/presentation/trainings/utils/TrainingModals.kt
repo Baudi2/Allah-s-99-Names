@@ -1,4 +1,4 @@
-package com.example.allahs99names.presentation.trainings.components
+package com.example.allahs99names.presentation.trainings.utils
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -78,7 +78,7 @@ fun TrainingSuccessfulModal(playSound: (Int) -> Unit, onContinueClicked: () -> U
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrainingErrorModal(correctAnswer: String, playSound: (Int) -> Unit, onContinueClicked: () -> Unit, onDismiss: () -> Unit = {}) {
+fun TrainingErrorModal(correctAnswer: String?, playSound: (Int) -> Unit, onContinueClicked: () -> Unit, onDismiss: () -> Unit = {}) {
     playSound.invoke(R.raw.error)
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -113,13 +113,15 @@ fun TrainingErrorModal(correctAnswer: String, playSound: (Int) -> Unit, onContin
                 fontSize = 18.sp
             )
             Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                text = correctAnswer,
-                color = MaterialTheme.colorScheme.error,
-                fontSize = 24.sp
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            if (correctAnswer != null) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    text = correctAnswer,
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 24.sp
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
             ButtonComponent(
                 modifier = Modifier
                     .padding(bottom = 44.dp),

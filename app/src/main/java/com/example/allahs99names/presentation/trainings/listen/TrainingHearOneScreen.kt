@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.allahs99names.R
 import com.example.allahs99names.domain.model.FullBlessedNameEntity
-import com.example.allahs99names.presentation.trainings.components.TrainingErrorModal
-import com.example.allahs99names.presentation.trainings.components.TrainingSuccessfulModal
+import com.example.allahs99names.presentation.trainings.utils.TrainingErrorModal
+import com.example.allahs99names.presentation.trainings.utils.TrainingSuccessfulModal
 import com.example.allahs99names.presentation.trainings.listen.TrainingHearState.Content
 import com.example.allahs99names.presentation.trainings.listen.TrainingHearState.Nothing
 import com.example.allahs99names.ui.components.ButtonComponent

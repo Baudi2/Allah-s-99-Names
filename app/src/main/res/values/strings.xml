@@ -23,4 +23,5 @@
     <string name="training_leave_message">Прогресс тренировки не будет сохранен если вы сейчас выйдете!</string>
     <string name="training_leave_stay_button_text">Продолжить учить</string>
     <string name="training_leave_leave_button_text">Завершить тренировку</string>
+    <string name="training_match_pair_title">Выберите совпадающие пары</string>
 </resources>
