@@ -30,9 +30,20 @@ class TrainingMatchViewModel @Inject constructor(
                     namesToGuess = namesToGuess,
                     namesToGuessShuffled = namesToGuess.asSequence().shuffled().toList(),
                     isComplete = null,
-                    guessedNames = emptyList()
+                    guessedNames = setOf()
                 )
             )
+        }
+    }
+
+    fun removeErrorModal() {
+        viewModelScope.launch {
+            val state = state.value
+            if (state is Content) {
+                emitState(
+                    state.copy(isComplete = null)
+                )
+            }
         }
     }
 
@@ -41,11 +52,11 @@ class TrainingMatchViewModel @Inject constructor(
             val state = state.value
             if (state is Content) {
                 if (arabicVersion == translationVersion) {
-                    val newGuessedList = arrayListOf(arabicVersion).apply {
+                    val newGuessedList = mutableSetOf(arabicVersion).apply {
                         addAll(state.guessedNames)
                     }
 
-                    if (newGuessedList.size == state.guessedNames.size) {
+                    if (newGuessedList.size == NAMES_TO_MATCH_COUNT) {
                         emitState(state.copy(isComplete = true))
                         return@launch
                     }

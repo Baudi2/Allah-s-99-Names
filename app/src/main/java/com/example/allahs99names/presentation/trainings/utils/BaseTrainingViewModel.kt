@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-abstract class BaseTrainingViewModel<S: TrainingState>(
+abstract class BaseTrainingViewModel<S : TrainingState>(
     private val nothingState: S
 ) : ViewModel() {
 

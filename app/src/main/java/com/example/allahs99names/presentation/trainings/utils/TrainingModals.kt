@@ -1,5 +1,6 @@
 package com.example.allahs99names.presentation.trainings.utils
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,12 +80,21 @@ fun TrainingSuccessfulModal(playSound: (Int) -> Unit, onContinueClicked: () -> U
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrainingErrorModal(correctAnswer: String?, playSound: (Int) -> Unit, onContinueClicked: () -> Unit, onDismiss: () -> Unit = {}) {
+fun TrainingErrorModal(
+    correctAnswer: String?,
+    @StringRes title: Int = R.string.training_error_modal_title,
+    @StringRes description: Int = R.string.training_error_modal_correct_answer_is,
+    @StringRes buttonText: Int = R.string.training_error_modal_button_text,
+    playSound: (Int) -> Unit,
+    onContinueClicked: () -> Unit,
+    sheetState: SheetState = rememberModalNonClosableState(),
+    onDismiss: () -> Unit = {}
+) {
     playSound.invoke(R.raw.error)
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.background,
-        sheetState = rememberModalNonClosableState(),
+        sheetState = sheetState,
         content = {
             Spacer(modifier = Modifier.height(20.dp))
             Row(
@@ -100,7 +111,7 @@ fun TrainingErrorModal(correctAnswer: String?, playSound: (Int) -> Unit, onConti
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = R.string.training_error_modal_title),
+                    text = stringResource(id = title),
                     color = MaterialTheme.colorScheme.error,
                     fontSize = 20.sp
                 )
@@ -108,7 +119,7 @@ fun TrainingErrorModal(correctAnswer: String?, playSound: (Int) -> Unit, onConti
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                text = stringResource(id = R.string.training_error_modal_correct_answer_is),
+                text = stringResource(id = description),
                 color = MaterialTheme.colorScheme.error,
                 fontSize = 18.sp
             )
@@ -126,7 +137,7 @@ fun TrainingErrorModal(correctAnswer: String?, playSound: (Int) -> Unit, onConti
                 modifier = Modifier
                     .padding(bottom = 44.dp),
                 state = ButtonState.ERROR,
-                text = stringResource(id = R.string.training_error_modal_button_text),
+                text = stringResource(id = buttonText),
                 onClick = onContinueClicked
             )
         },
@@ -212,6 +223,7 @@ private fun TrainingSuccessfulModalPreview() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
 private fun TrainingErrorModalPreview() {

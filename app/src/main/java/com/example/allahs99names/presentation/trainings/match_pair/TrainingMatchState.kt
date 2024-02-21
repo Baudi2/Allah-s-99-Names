@@ -9,7 +9,7 @@ sealed class TrainingMatchState : TrainingState {
         val namesToGuess: List<FullBlessedNameEntity>,
         val namesToGuessShuffled: List<FullBlessedNameEntity>,
         val isComplete: Boolean?,
-        val guessedNames: List<FullBlessedNameEntity>
+        val guessedNames: Set<FullBlessedNameEntity>
     ) : TrainingMatchState()
 
     data object Nothing : TrainingMatchState()

@@ -11,10 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -38,7 +39,9 @@ import com.example.allahs99names.presentation.trainings.match_pair.TrainingMatch
 import com.example.allahs99names.presentation.trainings.utils.TrainingErrorModal
 import com.example.allahs99names.presentation.trainings.utils.TrainingSuccessfulModal
 import com.example.allahs99names.ui.theme.Allahs99NamesTheme
+import com.example.allahs99names.ui.utils.applyIf
 import com.example.allahs99names.ui.utils.rippleClickable
+import kotlinx.coroutines.delay
 
 @Composable
 fun TrainingMatchScreen(goToNextTraining: () -> Unit) {
@@ -52,11 +55,24 @@ fun TrainingMatchScreen(goToNextTraining: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Content(content: Content, viewModel: TrainingMatchViewModel, goToNextTraining: () -> Unit) {
     val isSelectedArabicOption = remember { mutableStateOf<FullBlessedNameEntity?>(null) }
     val isSelectedTranslationOption = remember { mutableStateOf<FullBlessedNameEntity?>(null) }
     val context = LocalContext.current
+
+    LaunchedEffect(isSelectedArabicOption.value != null && isSelectedTranslationOption.value != null) {
+        if (isSelectedArabicOption.value != null && isSelectedTranslationOption.value != null) {
+            delay(150) // задержка для отработки анимации выбора парного элемента
+            viewModel.matchPair(
+                arabicVersion = isSelectedArabicOption.value!!,
+                translationVersion = isSelectedTranslationOption.value!!
+            )
+            isSelectedArabicOption.value = null
+            isSelectedTranslationOption.value = null
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -74,6 +90,7 @@ private fun Content(content: Content, viewModel: TrainingMatchViewModel, goToNex
         NameOptionsBlock(
             namesToGuess = content.namesToGuess,
             namesToGuessShuffled = content.namesToGuessShuffled,
+            guessedNamesList = content.guessedNames,
             isSelectedArabicOption = isSelectedArabicOption,
             isSelectedTranslationOption = isSelectedTranslationOption
         ) { nameRecordingId ->
@@ -93,13 +110,19 @@ private fun Content(content: Content, viewModel: TrainingMatchViewModel, goToNex
         }
         if (content.isComplete == false) {
             TrainingErrorModal(
+                title = R.string.training_error_modal_match_pair_title,
+                description = R.string.training_error_modal_match_pair_description,
+                buttonText = R.string.training_error_modal_match_pair_button_text,
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
                 correctAnswer = null,
                 playSound = { soundId ->
                     viewModel.playSound(context, soundId)
                 },
                 onContinueClicked = {
-                    viewModel.dropState()
-                    goToNextTraining.invoke()
+                    viewModel.removeErrorModal()
+                },
+                onDismiss = {
+                    viewModel.removeErrorModal()
                 }
             )
         }
@@ -110,6 +133,7 @@ private fun Content(content: Content, viewModel: TrainingMatchViewModel, goToNex
 private fun NameOptionsBlock(
     namesToGuess: List<FullBlessedNameEntity>,
     namesToGuessShuffled: List<FullBlessedNameEntity>,
+    guessedNamesList: Set<FullBlessedNameEntity>,
     isSelectedArabicOption: MutableState<FullBlessedNameEntity?>,
     isSelectedTranslationOption: MutableState<FullBlessedNameEntity?>,
     playSound: (Int) -> Unit
@@ -120,6 +144,7 @@ private fun NameOptionsBlock(
         NameOptionsColumn(
             modifier = Modifier.weight(1f),
             namesToGuess = namesToGuess,
+            guessedNamesList = guessedNamesList,
             isSelectedState = isSelectedArabicOption,
             isArabicVersion = true,
             playSound = playSound
@@ -127,6 +152,7 @@ private fun NameOptionsBlock(
         NameOptionsColumn(
             modifier = Modifier.weight(1f),
             namesToGuess = namesToGuessShuffled,
+            guessedNamesList = guessedNamesList,
             isArabicVersion = false,
             isSelectedState = isSelectedTranslationOption
         )
@@ -137,6 +163,7 @@ private fun NameOptionsBlock(
 private fun NameOptionsColumn(
     modifier: Modifier,
     namesToGuess: List<FullBlessedNameEntity>,
+    guessedNamesList: Set<FullBlessedNameEntity>,
     isSelectedState: MutableState<FullBlessedNameEntity?>,
     isArabicVersion: Boolean,
     playSound: ((Int) -> Unit)? = null
@@ -149,6 +176,7 @@ private fun NameOptionsColumn(
             SingleOptionComponent(
                 modifier = Modifier.weight(1f),
                 fullNameEntity = it,
+                isDisabled = it in guessedNamesList,
                 isSelectedState = isSelectedState,
                 isArabicVersion = isArabicVersion,
                 playSound = playSound
@@ -163,6 +191,7 @@ private fun NameOptionsColumn(
 private fun SingleOptionComponent(
     modifier: Modifier,
     fullNameEntity: FullBlessedNameEntity,
+    isDisabled: Boolean,
     isSelectedState: MutableState<FullBlessedNameEntity?>,
     isArabicVersion: Boolean,
     playSound: ((Int) -> Unit)? = null
@@ -173,9 +202,28 @@ private fun SingleOptionComponent(
         isSelected.value = isSelectedState.value == fullNameEntity
     }
 
+    val boxBorderColor = when {
+        isDisabled -> Color.LightGray
+        isSelected.value -> MaterialTheme.colorScheme.primary
+        !isSelected.value -> Color.Gray
+        else -> Color.LightGray
+    }
+
+    val textColor = when {
+        isDisabled -> Color.LightGray
+        isSelected.value -> MaterialTheme.colorScheme.primary
+        !isSelected.value -> Color.Gray
+        else -> Color.LightGray
+    }
+
     Box(
         modifier = modifier
-            .padding(horizontal = 20.dp)
+            .applyIf(isArabicVersion) {
+                padding(start = 20.dp, end = 8.dp)
+            }
+            .applyIf(isArabicVersion.not()) {
+                padding(end = 20.dp, start = 8.dp)
+            }
             .fillMaxWidth()
             .background(
                 color = MaterialTheme.colorScheme.background,
@@ -184,17 +232,15 @@ private fun SingleOptionComponent(
             .border(
                 border = BorderStroke(
                     width = 2.dp,
-                    color = if (isSelected.value) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        Color.LightGray
-                    }
+                    color = boxBorderColor
                 ),
                 shape = RoundedCornerShape(12)
             )
-            .rippleClickable {
+            .rippleClickable(enabled = isDisabled.not()) {
                 isSelectedState.value = if (isSelectedState.value == fullNameEntity) null else fullNameEntity
-                playSound?.invoke(fullNameEntity.nameRecordingId)
+                if (isSelected.value.not()) {
+                    playSound?.invoke(fullNameEntity.nameRecordingId)
+                }
             },
         contentAlignment = Alignment.Center
     ) {
@@ -205,13 +251,11 @@ private fun SingleOptionComponent(
             } else {
                 fullNameEntity.russianVersion
             },
-            color = if (isSelected.value) {
-                MaterialTheme.colorScheme.primary
+            color = textColor,
+            fontSize = if (isArabicVersion) {
+                28.sp
             } else {
-                Color.Gray
-            },
-            fontSize = if (isArabicVersion) 28.sp else {
-                20.sp
+                18.sp
             },
             textAlign = TextAlign.Center,
             lineHeight = 28.sp
