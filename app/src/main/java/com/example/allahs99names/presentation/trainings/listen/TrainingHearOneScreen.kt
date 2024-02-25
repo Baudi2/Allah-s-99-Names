@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,8 +38,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.allahs99names.R
 import com.example.allahs99names.domain.model.FullBlessedNameEntity
-import com.example.allahs99names.presentation.trainings.components.TrainingErrorModal
-import com.example.allahs99names.presentation.trainings.components.TrainingSuccessfulModal
+import com.example.allahs99names.presentation.trainings.utils.TrainingErrorModal
+import com.example.allahs99names.presentation.trainings.utils.TrainingSuccessfulModal
 import com.example.allahs99names.presentation.trainings.listen.TrainingHearState.Content
 import com.example.allahs99names.presentation.trainings.listen.TrainingHearState.Nothing
 import com.example.allahs99names.ui.components.ButtonComponent
@@ -67,6 +68,7 @@ fun TrainingHearOneScreen(goToNextTraining: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Content(content: Content, viewModel: TrainingHearViewModel, goToNextTraining: () -> Unit) {
     val selectedName = remember { mutableStateOf<FullBlessedNameEntity?>(null) }

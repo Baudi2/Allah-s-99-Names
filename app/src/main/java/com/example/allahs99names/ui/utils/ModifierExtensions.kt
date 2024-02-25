@@ -3,6 +3,7 @@ package com.example.allahs99names.ui.utils
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -17,4 +18,12 @@ fun Modifier.rippleClickable(color: Color = Color.Gray, enabled: Boolean = true,
             onClick = onClick,
             enabled = enabled
         )
+}
+
+@Composable
+fun Modifier.applyIf(predicate: Boolean, run: @Composable Modifier.() -> Modifier): Modifier {
+    if (predicate) {
+        return run.invoke(this)
+    }
+    return this
 }
