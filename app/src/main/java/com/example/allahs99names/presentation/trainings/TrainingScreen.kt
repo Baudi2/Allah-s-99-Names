@@ -11,17 +11,19 @@ import com.example.allahs99names.presentation.trainings.utils.TrainingLeaveModal
 import com.example.allahs99names.presentation.trainings.listen.TrainingHearOneScreen
 import com.example.allahs99names.presentation.trainings.listen.TrainingHearTwoScreen
 import com.example.allahs99names.presentation.trainings.match_pair.TrainingMatchScreen
+import com.example.allahs99names.presentation.trainings.select_option.TrainingSelectOptionScreen
 import com.example.allahs99names.ui.theme.Allahs99NamesTheme
 
 enum class TrainingTypes {
     HEAR_ONE,
     HEAR_TWO,
-    MATCH_PAIR
+    MATCH_PAIR,
+    SELECT_OPTION
 }
 
 @Composable
 fun TrainingScreen(navController: NavController) {
-    val currentTraining = remember { mutableStateOf(TrainingTypes.MATCH_PAIR) }
+    val currentTraining = remember { mutableStateOf(TrainingTypes.SELECT_OPTION) }
     val isLeaveModalDisplayed = remember { mutableStateOf(false) }
 
     BackHandler {
@@ -29,6 +31,12 @@ fun TrainingScreen(navController: NavController) {
     }
 
     when (currentTraining.value) {
+        TrainingTypes.SELECT_OPTION -> {
+            TrainingSelectOptionScreen {
+                currentTraining.value = TrainingTypes.MATCH_PAIR
+            }
+        }
+
         TrainingTypes.MATCH_PAIR -> {
             TrainingMatchScreen {
                 currentTraining.value = TrainingTypes.HEAR_ONE

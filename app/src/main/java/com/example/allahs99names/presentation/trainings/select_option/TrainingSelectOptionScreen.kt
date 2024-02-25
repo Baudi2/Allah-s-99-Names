@@ -1,22 +1,19 @@
-package com.example.allahs99names.presentation.trainings.listen
+package com.example.allahs99names.presentation.trainings.select_option
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,11 +34,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.allahs99names.R
 import com.example.allahs99names.domain.model.FullBlessedNameEntity
+import com.example.allahs99names.presentation.trainings.SimpleTrainingState.Content
+import com.example.allahs99names.presentation.trainings.SimpleTrainingState.Nothing
 import com.example.allahs99names.presentation.trainings.SimpleTrainingViewModel
 import com.example.allahs99names.presentation.trainings.utils.TrainingErrorModal
 import com.example.allahs99names.presentation.trainings.utils.TrainingSuccessfulModal
-import com.example.allahs99names.presentation.trainings.SimpleTrainingState.Content
-import com.example.allahs99names.presentation.trainings.SimpleTrainingState.Nothing
 import com.example.allahs99names.ui.components.ButtonComponent
 import com.example.allahs99names.ui.components.ButtonState
 import com.example.allahs99names.ui.theme.Allahs99NamesTheme
@@ -51,7 +47,7 @@ import com.example.allahs99names.ui.utils.rippleClickable
 private const val OPTIONS_TO_GUESS = 4
 
 @Composable
-fun TrainingHearOneScreen(goToNextTraining: () -> Unit) {
+fun TrainingSelectOptionScreen(goToNextTraining: () -> Unit) {
     val viewModel: SimpleTrainingViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
@@ -83,18 +79,18 @@ private fun Content(content: Content, viewModel: SimpleTrainingViewModel, goToNe
         Text(
             modifier = Modifier
                 .padding(start = 16.dp, top = 16.dp),
-            text = stringResource(id = R.string.training_hear_one_title),
+            text = stringResource(id = R.string.training_select_option_title, content.nameToGuess.transliteration),
             color = MaterialTheme.colorScheme.primary,
             fontSize = 20.sp
         )
 
-        PlayCorrectNameRecordingButtonComponent {
-            viewModel.playSound(context, content.nameToGuess.nameRecordingId)
+        NamesBlockComponent(
+            modifier = Modifier.weight(1f),
+            names = content.namesOptions,
+            selectedName = selectedName
+        ) { nameRecordingId ->
+            viewModel.playSound(context, nameRecordingId)
         }
-
-        NamesToGuessBlockComponent(content.namesOptions, selectedName)
-
-        Spacer(modifier = Modifier.weight(1f))
 
         ButtonComponent(
             modifier = Modifier
@@ -139,103 +135,81 @@ private fun Content(content: Content, viewModel: SimpleTrainingViewModel, goToNe
 }
 
 @Composable
-private fun PlayCorrectNameRecordingButtonComponent(playNameRecording: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
+private fun NamesBlockComponent(
+    modifier: Modifier,
+    names: List<FullBlessedNameEntity>,
+    selectedName: MutableState<FullBlessedNameEntity?>,
+    playSound: (Int) -> Unit
+) {
+    Row(
+        modifier = modifier.fillMaxWidth()
     ) {
-        Box(
+        NamesBlockColumn(
+            modifier = Modifier.weight(1f),
+            singleNamePaddingValues = PaddingValues(start = 12.dp, end = 6.dp),
+            names = Pair(names[0], names[1]),
+            selectedName = selectedName,
+            playSound = playSound
+        )
+        NamesBlockColumn(
+            modifier = Modifier.weight(1f),
+            singleNamePaddingValues = PaddingValues(start = 6.dp, end = 12.dp),
+            names = Pair(names[2], names[3]),
+            selectedName = selectedName,
+            playSound = playSound
+        )
+    }
+}
+
+@Composable
+private fun NamesBlockColumn(
+    modifier: Modifier,
+    singleNamePaddingValues: PaddingValues,
+    names: Pair<FullBlessedNameEntity, FullBlessedNameEntity>,
+    selectedName: MutableState<FullBlessedNameEntity?>,
+    playSound: (Int) -> Unit
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Spacer(modifier = Modifier.height(12.dp))
+        SingleNameComponent(
             modifier = Modifier
-                .padding(top = 100.dp)
-                .width(128.dp)
-                .height(120.dp)
-                .align(Alignment.CenterHorizontally)
-                .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(12)
-                )
-                .border(
-                    border = BorderStroke(2.dp, Color.LightGray),
-                    shape = RoundedCornerShape(12)
-                )
-                .rippleClickable {
-                    playNameRecording.invoke()
-                }
-        ) {
-            Icon(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(28.dp),
-                painter = painterResource(id = R.drawable.icon_play_name_recording),
-                contentDescription = null,
-                tint = Color.White
-            )
-        }
+                .weight(1f)
+                .padding(singleNamePaddingValues),
+            fullNameEntity = names.first,
+            isSelectedState = selectedName,
+            playSound = playSound
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        SingleNameComponent(
+            modifier = Modifier
+                .weight(1f)
+                .padding(singleNamePaddingValues),
+            fullNameEntity = names.second,
+            isSelectedState = selectedName,
+            playSound = playSound
+        )
+        Spacer(modifier = Modifier.height(12.dp))
     }
 }
 
 @Composable
-private fun NamesToGuessBlockComponent(names: List<FullBlessedNameEntity>, selectedName: MutableState<FullBlessedNameEntity?>) {
-    Spacer(modifier = Modifier.height(64.dp))
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            HearOneNameOptionComponent(
-                bNameEntity = names[0],
-                isSelectedState = selectedName,
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            HearOneNameOptionComponent(
-                bNameEntity = names[1],
-                isSelectedState = selectedName,
-                modifier = Modifier.weight(1f)
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            HearOneNameOptionComponent(
-                bNameEntity = names[2],
-                isSelectedState = selectedName,
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            HearOneNameOptionComponent(
-                bNameEntity = names[3],
-                isSelectedState = selectedName,
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
-
-@Composable
-private fun HearOneNameOptionComponent(
-    bNameEntity: FullBlessedNameEntity,
+private fun SingleNameComponent(
+    modifier: Modifier = Modifier,
+    fullNameEntity: FullBlessedNameEntity,
     isSelectedState: MutableState<FullBlessedNameEntity?>,
-    modifier: Modifier = Modifier
+    playSound: (Int) -> Unit
 ) {
     val isSelected = remember { mutableStateOf(false) }
 
     LaunchedEffect(isSelectedState.value) {
-        isSelected.value = isSelectedState.value == bNameEntity
+        isSelected.value = isSelectedState.value == fullNameEntity
     }
 
     Box(
         modifier = modifier
-            .widthIn(min = 100.dp)
-            .height(120.dp)
+            .fillMaxWidth()
             .background(
                 color = MaterialTheme.colorScheme.background,
                 shape = RoundedCornerShape(12)
@@ -252,29 +226,32 @@ private fun HearOneNameOptionComponent(
                 shape = RoundedCornerShape(12)
             )
             .rippleClickable {
-                isSelectedState.value = if (isSelectedState.value == bNameEntity) null else bNameEntity
+                if (isSelectedState.value != fullNameEntity) {
+                    isSelectedState.value = fullNameEntity
+                }
+                playSound.invoke(fullNameEntity.nameRecordingId)
             },
         contentAlignment = Alignment.Center
     ) {
         Text(
-            modifier = Modifier.padding(20.dp),
-            text = bNameEntity.arabicVersion,
+            modifier = Modifier.padding(12.dp),
+            text = fullNameEntity.arabicVersion,
             color = if (isSelected.value) {
                 MaterialTheme.colorScheme.primary
             } else {
                 Color.Gray
             },
-            fontSize = 26.sp,
+            fontSize = 38.sp,
             textAlign = TextAlign.Center,
-            lineHeight = 36.sp
+            lineHeight = 48.sp
         )
     }
 }
 
-@Composable
 @Preview
-private fun TrainingHearOneScreenPreview() {
+@Composable
+private fun TrainingSelectOptionScreenPreview() {
     Allahs99NamesTheme {
-        TrainingHearOneScreen {}
+        TrainingSelectOptionScreen {}
     }
 }
