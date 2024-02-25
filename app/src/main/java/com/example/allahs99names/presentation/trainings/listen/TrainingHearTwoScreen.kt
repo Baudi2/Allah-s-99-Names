@@ -36,10 +36,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.allahs99names.R
 import com.example.allahs99names.domain.model.FullBlessedNameEntity
+import com.example.allahs99names.presentation.trainings.SimpleTrainingViewModel
 import com.example.allahs99names.presentation.trainings.utils.TrainingErrorModal
 import com.example.allahs99names.presentation.trainings.utils.TrainingSuccessfulModal
-import com.example.allahs99names.presentation.trainings.listen.TrainingHearState.Content
-import com.example.allahs99names.presentation.trainings.listen.TrainingHearState.Nothing
+import com.example.allahs99names.presentation.trainings.SimpleTrainingState.Content
+import com.example.allahs99names.presentation.trainings.SimpleTrainingState.Nothing
 import com.example.allahs99names.ui.components.ButtonComponent
 import com.example.allahs99names.ui.components.ButtonState
 import com.example.allahs99names.ui.theme.Allahs99NamesTheme
@@ -49,7 +50,7 @@ private const val OPTIONS_TO_GUESS = 3
 
 @Composable
 fun TrainingHearTwoScreen(goToNextTraining: () -> Unit) {
-    val viewModel: TrainingHearViewModel = hiltViewModel()
+    val viewModel: SimpleTrainingViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
         viewModel.loadContent(OPTIONS_TO_GUESS)
@@ -68,7 +69,7 @@ fun TrainingHearTwoScreen(goToNextTraining: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Content(content: Content, viewModel: TrainingHearViewModel, goToNextTraining: () -> Unit) {
+private fun Content(content: Content, viewModel: SimpleTrainingViewModel, goToNextTraining: () -> Unit) {
     val selectedName = remember { mutableStateOf<FullBlessedNameEntity?>(null) }
     val context = LocalContext.current
 
