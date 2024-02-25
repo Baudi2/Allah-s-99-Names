@@ -28,9 +28,9 @@ abstract class BaseTrainingViewModel<S : TrainingState>(
         mutableState.emit(state)
     }
 
-    fun playSound(context: Context, @RawRes soundResId: Int) {
+    fun playSound(context: Context, @RawRes soundResId: Int, allowAudioLayering: Boolean = false) {
         // If there's already a sound playing, stop it and release the resources
-        mediaPlayer?.release()
+        if (allowAudioLayering.not()) mediaPlayer?.release()
 
         mediaPlayer = MediaPlayer.create(context, soundResId).apply {
             setOnCompletionListener {

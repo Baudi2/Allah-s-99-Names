@@ -69,9 +69,12 @@ private fun Content(content: Content, viewModel: TrainingMatchViewModel, goToNex
                 arabicVersion = isSelectedArabicOption.value!!,
                 translationVersion = isSelectedTranslationOption.value!!
             )
-            isSelectedArabicOption.value = null
-            isSelectedTranslationOption.value = null
         }
+    }
+
+    LaunchedEffect(content.guessedNames.contains(isSelectedArabicOption.value)) {
+        isSelectedArabicOption.value = null
+        isSelectedTranslationOption.value = null
     }
 
     Column(
@@ -92,7 +95,8 @@ private fun Content(content: Content, viewModel: TrainingMatchViewModel, goToNex
             namesToGuessShuffled = content.namesToGuessShuffled,
             guessedNamesList = content.guessedNames,
             isSelectedArabicOption = isSelectedArabicOption,
-            isSelectedTranslationOption = isSelectedTranslationOption
+            isSelectedTranslationOption = isSelectedTranslationOption,
+            isErrorModalDisplayed = content.isComplete == false
         ) { nameRecordingId ->
             viewModel.playSound(context, nameRecordingId)
         }
@@ -100,7 +104,7 @@ private fun Content(content: Content, viewModel: TrainingMatchViewModel, goToNex
         if (content.isComplete == true) {
             TrainingSuccessfulModal(
                 playSound = { soundId ->
-                    viewModel.playSound(context, soundId)
+                    viewModel.playSound(context, soundId, true)
                 },
                 onContinueClicked = {
                     viewModel.dropState()
@@ -116,12 +120,16 @@ private fun Content(content: Content, viewModel: TrainingMatchViewModel, goToNex
                 sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
                 correctAnswer = null,
                 playSound = { soundId ->
-                    viewModel.playSound(context, soundId)
+                    viewModel.playSound(context, soundId, true)
                 },
                 onContinueClicked = {
+                    isSelectedArabicOption.value = null
+                    isSelectedTranslationOption.value = null
                     viewModel.removeErrorModal()
                 },
                 onDismiss = {
+                    isSelectedArabicOption.value = null
+                    isSelectedTranslationOption.value = null
                     viewModel.removeErrorModal()
                 }
             )
@@ -136,6 +144,7 @@ private fun NameOptionsBlock(
     guessedNamesList: Set<FullBlessedNameEntity>,
     isSelectedArabicOption: MutableState<FullBlessedNameEntity?>,
     isSelectedTranslationOption: MutableState<FullBlessedNameEntity?>,
+    isErrorModalDisplayed: Boolean,
     playSound: (Int) -> Unit
 ) {
     Row(
@@ -147,6 +156,7 @@ private fun NameOptionsBlock(
             guessedNamesList = guessedNamesList,
             isSelectedState = isSelectedArabicOption,
             isArabicVersion = true,
+            isErrorModalDisplayed = isErrorModalDisplayed,
             playSound = playSound
         )
         NameOptionsColumn(
@@ -154,6 +164,7 @@ private fun NameOptionsBlock(
             namesToGuess = namesToGuessShuffled,
             guessedNamesList = guessedNamesList,
             isArabicVersion = false,
+            isErrorModalDisplayed = isErrorModalDisplayed,
             isSelectedState = isSelectedTranslationOption
         )
     }
@@ -166,6 +177,7 @@ private fun NameOptionsColumn(
     guessedNamesList: Set<FullBlessedNameEntity>,
     isSelectedState: MutableState<FullBlessedNameEntity?>,
     isArabicVersion: Boolean,
+    isErrorModalDisplayed: Boolean,
     playSound: ((Int) -> Unit)? = null
 ) {
     Column(
@@ -179,6 +191,7 @@ private fun NameOptionsColumn(
                 isDisabled = it in guessedNamesList,
                 isSelectedState = isSelectedState,
                 isArabicVersion = isArabicVersion,
+                isErrorModalDisplayed = isErrorModalDisplayed,
                 playSound = playSound
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -194,6 +207,7 @@ private fun SingleOptionComponent(
     isDisabled: Boolean,
     isSelectedState: MutableState<FullBlessedNameEntity?>,
     isArabicVersion: Boolean,
+    isErrorModalDisplayed: Boolean,
     playSound: ((Int) -> Unit)? = null
 ) {
     val isSelected = remember { mutableStateOf(false) }
@@ -203,6 +217,7 @@ private fun SingleOptionComponent(
     }
 
     val boxBorderColor = when {
+        isErrorModalDisplayed && isSelected.value -> MaterialTheme.colorScheme.error
         isDisabled -> Color.LightGray
         isSelected.value -> MaterialTheme.colorScheme.primary
         !isSelected.value -> Color.Gray
@@ -210,6 +225,7 @@ private fun SingleOptionComponent(
     }
 
     val textColor = when {
+        isErrorModalDisplayed && isSelected.value -> MaterialTheme.colorScheme.error
         isDisabled -> Color.LightGray
         isSelected.value -> MaterialTheme.colorScheme.primary
         !isSelected.value -> Color.Gray
