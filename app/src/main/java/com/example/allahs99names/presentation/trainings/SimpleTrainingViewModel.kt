@@ -42,4 +42,9 @@ class SimpleTrainingViewModel @Inject constructor(
             }
         }
     }
+
+    fun reloadTraining(namesToLoad: Int) {
+        dropState()
+        loadContent(namesToLoad)
+    }
 }

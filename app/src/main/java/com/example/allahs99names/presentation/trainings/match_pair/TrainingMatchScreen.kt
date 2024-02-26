@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.allahs99names.R
 import com.example.allahs99names.domain.model.FullBlessedNameEntity
+import com.example.allahs99names.presentation.trainings.IsComplete
 import com.example.allahs99names.presentation.trainings.match_pair.TrainingMatchState.Content
 import com.example.allahs99names.presentation.trainings.match_pair.TrainingMatchState.Nothing
 import com.example.allahs99names.presentation.trainings.utils.TrainingErrorModal
@@ -44,7 +45,7 @@ import com.example.allahs99names.ui.utils.rippleClickable
 import kotlinx.coroutines.delay
 
 @Composable
-fun TrainingMatchScreen(goToNextTraining: () -> Unit) {
+fun TrainingMatchScreen(goToNextTraining: (IsComplete) -> Unit) {
     val viewModel: TrainingMatchViewModel = hiltViewModel()
     val state = viewModel.state.collectAsState()
 
@@ -57,7 +58,7 @@ fun TrainingMatchScreen(goToNextTraining: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Content(content: Content, viewModel: TrainingMatchViewModel, goToNextTraining: () -> Unit) {
+private fun Content(content: Content, viewModel: TrainingMatchViewModel, goToNextTraining: (IsComplete) -> Unit) {
     val isSelectedArabicOption = remember { mutableStateOf<FullBlessedNameEntity?>(null) }
     val isSelectedTranslationOption = remember { mutableStateOf<FullBlessedNameEntity?>(null) }
     val context = LocalContext.current
@@ -108,7 +109,7 @@ private fun Content(content: Content, viewModel: TrainingMatchViewModel, goToNex
                 },
                 onContinueClicked = {
                     viewModel.dropState()
-                    goToNextTraining.invoke()
+                    goToNextTraining.invoke(true)
                 }
             )
         }

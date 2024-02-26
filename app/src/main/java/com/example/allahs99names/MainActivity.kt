@@ -5,10 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
@@ -47,13 +48,22 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     bottomBar = if (currentRoute in bottomNavVisibleRoutes) {
                         {
-                            BottomNavigation(
-                                backgroundColor = MaterialTheme.colorScheme.background
+                            NavigationBar(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer
                             ) {
                                 bottomNavVisibleScreens.forEach { screen ->
                                     val isSelected =
                                         currentDestination?.hierarchy?.any { it.route == screen.route } == true
-                                    BottomNavigationItem(
+                                    NavigationBarItem(
+                                        colors = NavigationBarItemColors(
+                                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                                            unselectedIconColor = Color.Gray,
+                                            selectedIndicatorColor = Color.Transparent,
+                                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                                            unselectedTextColor = Color.Gray,
+                                            disabledIconColor = Color.Transparent,
+                                            disabledTextColor = Color.Transparent
+                                        ),
                                         icon = {
                                             Icon(
                                                 painter = painterResource(
@@ -63,16 +73,14 @@ class MainActivity : ComponentActivity() {
                                                         screen.bottomNavUnselectedIcon ?: 0
                                                     }
                                                 ),
-                                                contentDescription = null,
-                                                tint = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray
+                                                contentDescription = null
                                             )
                                         },
                                         label = {
                                             Text(
                                                 text = stringResource(
                                                     id = screen.bottomNavText ?: 0
-                                                ),
-                                                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray
+                                                )
                                             )
                                         },
                                         selected = isSelected,
