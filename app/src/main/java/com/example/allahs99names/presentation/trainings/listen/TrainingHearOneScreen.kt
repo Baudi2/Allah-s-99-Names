@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.allahs99names.R
 import com.example.allahs99names.domain.model.FullBlessedNameEntity
+import com.example.allahs99names.presentation.trainings.IsComplete
 import com.example.allahs99names.presentation.trainings.SimpleTrainingViewModel
 import com.example.allahs99names.presentation.trainings.utils.TrainingErrorModal
 import com.example.allahs99names.presentation.trainings.utils.TrainingSuccessfulModal
@@ -51,7 +52,7 @@ import com.example.allahs99names.ui.utils.rippleClickable
 private const val OPTIONS_TO_GUESS = 4
 
 @Composable
-fun TrainingHearOneScreen(goToNextTraining: () -> Unit) {
+fun TrainingHearOneScreen(isLastTraining: Boolean, goToNextTraining: (IsComplete) -> Unit) {
     val viewModel: SimpleTrainingViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
@@ -62,7 +63,7 @@ fun TrainingHearOneScreen(goToNextTraining: () -> Unit) {
 
     when (val observedState = state.value) {
         is Content -> {
-            Content(observedState, viewModel, goToNextTraining)
+            Content(observedState, viewModel, isLastTraining, goToNextTraining)
         }
 
         Nothing -> Unit
@@ -71,7 +72,7 @@ fun TrainingHearOneScreen(goToNextTraining: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Content(content: Content, viewModel: SimpleTrainingViewModel, goToNextTraining: () -> Unit) {
+private fun Content(content: Content, viewModel: SimpleTrainingViewModel, isLastTraining: Boolean, goToNextTraining: (IsComplete) -> Unit) {
     val selectedName = remember { mutableStateOf<FullBlessedNameEntity?>(null) }
     val context = LocalContext.current
 
@@ -120,7 +121,7 @@ private fun Content(content: Content, viewModel: SimpleTrainingViewModel, goToNe
             },
             onContinueClicked = {
                 viewModel.dropState()
-                goToNextTraining.invoke()
+                goToNextTraining.invoke(true)
             }
         )
     }
@@ -131,8 +132,13 @@ private fun Content(content: Content, viewModel: SimpleTrainingViewModel, goToNe
                 viewModel.playSound(context, soundId)
             },
             onContinueClicked = {
-                viewModel.dropState()
-                goToNextTraining.invoke()
+                if (isLastTraining) {
+                    viewModel.reloadTraining(OPTIONS_TO_GUESS)
+                    selectedName.value = null
+                } else {
+                    viewModel.dropState()
+                    goToNextTraining.invoke(false)
+                }
             }
         )
     }
@@ -275,6 +281,6 @@ private fun HearOneNameOptionComponent(
 @Preview
 private fun TrainingHearOneScreenPreview() {
     Allahs99NamesTheme {
-        TrainingHearOneScreen {}
+        TrainingHearOneScreen(false) {}
     }
 }
